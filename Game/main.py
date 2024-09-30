@@ -8,6 +8,10 @@ from setting import *
 pygame.init()
 screen = pygame.display.set_mode((Screen_Width, Screen_Height))
 pygame.display.set_caption(Title)
+
+# Imported my own icon into the game
+program_icon = pygame.image.load('./assets/icon.png')
+pygame.display.set_icon(program_icon)
 # pygame.time.Clock()
 board = Board()
 
