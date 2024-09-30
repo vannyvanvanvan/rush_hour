@@ -1,9 +1,12 @@
 DarkGrey = (40, 40, 40)
 LightGrey = (100, 100, 100)
+White = (255, 255, 255)
+Red = (255, 0, 0)
 
-BGColor = DarkGrey
 
-# Game
-Height = 650
-Width = 1100
+# Game settings
+Screen_Height = 600
+Screen_Width = 600
 Title = "Rush_hour"
+
+tile_size = 100

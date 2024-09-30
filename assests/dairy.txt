@@ -2,3 +2,6 @@
 - Created the basic files for the rush_hour game.
 - Implementation of the basic code for the pygame to run.
 - Implementation of the basic code for the game to work in console first.
+
+-Created the basic functions like grid rendering, and winning message for the game.
+-Tested if the red car passed the exit and will it appear the winning message and update the game state act as a soft lock.
