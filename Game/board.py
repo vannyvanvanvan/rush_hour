@@ -8,10 +8,11 @@ class Board:
         
         self.game_state = "stage_1"
         
+        # Board array 
         self.board = [
             ["X", "X", "X", "X", "X", "X"],
              ["X", "X", "X", "X", "X", "X"],
-              ["X", "X", "X", "X", "X", "X"], # Exit is here
+              ["X", "X", "X", "X", "X", "X", "X"], # Exit is here
                ["X", "X", "X", "X", "X", "X"],
                 ["X", "X", "X", "X", "X", "X"],
                  ["X", "X", "X", "X", "X", "X"],
@@ -34,7 +35,7 @@ class Board:
     
     def exit_check(self):
         # Exit check if the red block is in the array[5][3]
-        exit_x = 5  
+        exit_x = 6
         exit_y = 2
         return self.board[exit_y][exit_x] == "R"
     

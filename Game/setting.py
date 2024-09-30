@@ -6,7 +6,7 @@ Yellow = (255,255,0)
 
 
 # Game settings
-Screen_Height = 600
+Screen_Height = 800
 Screen_Width = 600
 Title = "Rush_hour"
 

@@ -7,3 +7,7 @@
 -Tested if the red block passed the exit and will it appear the winning message and update the game state act as a soft lock.
 
 -Created the function of the block.py, which contain drag function, their data position/orientation/colour/size and how they are being rendered
+-I figured that due to my function making the block can only move within 6x6 grid. And i needed my red block to move past the array [5][2] as right now when the red block moved to [5][2] it counts as victorious.
+we doesnt want that to happened, so I recreated the array, making the red block accessible to [6][2] and fixed some code to expand the grid beyond 6x6, making it look more appealing.
+
+-I thought of a way to make the game more interesting by adding multiple levels. It will also give the game a "Gameboy-like" appearance.
