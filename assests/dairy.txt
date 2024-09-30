@@ -4,4 +4,6 @@
 - Implementation of the basic code for the game to work in console first.
 
 -Created the basic functions like grid rendering, and winning message for the game.
--Tested if the red car passed the exit and will it appear the winning message and update the game state act as a soft lock.
+-Tested if the red block passed the exit and will it appear the winning message and update the game state act as a soft lock.
+
+-Created the function of the block.py, which contain drag function, their data position/orientation/colour/size and how they are being rendered

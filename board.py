@@ -17,6 +17,14 @@ class Board:
                  ["X", "X", "X", "X", "X", "X"],
         ]
         
+    def place_block(self, block):
+        # Update the board array with the block's position and size
+        for i in range(block.size):
+            if block.orientation == 'h':
+                self.board[block.position[1]][block.position[0] + i] = "R" if block.colour == Red else "Y"
+            else:
+                self.board[block.position[1] + i][block.position[0]] = "R" if block.colour == Red else "Y"
+                
     def display(self):
         #Prints the board to the console 
         for row in self.board:
@@ -25,7 +33,7 @@ class Board:
         
     
     def exit_check(self):
-        # Exit check if the red car is in the array[5][3]
+        # Exit check if the red block is in the array[5][3]
         exit_x = 5  
         exit_y = 2
         return self.board[exit_y][exit_x] == "R"
@@ -36,9 +44,11 @@ class Board:
             for x, cell in enumerate(row):
                 # Set the color for the tile
                 if cell == "X":
-                    color = White  # White for empty spaces
+                    color = White  
                 elif cell == "R":
-                    color = Red  # Red for the red car
+                    color = Red  
+                elif cell == "Y":
+                    color = Yellow 
                 
                 # Draw the rectangle for each tile
                 pygame.draw.rect(screen, color, pygame.Rect(x * tile_size, y * tile_size, tile_size, tile_size))
