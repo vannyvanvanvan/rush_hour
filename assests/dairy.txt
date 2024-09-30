@@ -1,0 +1,4 @@
+9/30/2024
+- Created the basic files for the rush_hour game.
+- Implementation of the basic code for the pygame to run.
+- Implementation of the basic code for the game to work in console first.
