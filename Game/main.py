@@ -69,11 +69,11 @@ def draw():
         # Can be removed
         board.display()                     # Concole board
         
-        board.render(screen, tile_size)     # Render the board
-        red_block.render(screen)            # Render the red block
-        yellow_block.render(screen)            # Render the red block
+        board.render(screen, tile_size)         # Render the board
+        red_block.render(screen)                # Render the red block
+        yellow_block.render(screen)             # Render the red block
         
-        pygame.display.flip()               # Update the display
+        pygame.display.flip()                   # Update the display
         
     # Check if the red car has reached the exit if so stage_2
     # Console and game output

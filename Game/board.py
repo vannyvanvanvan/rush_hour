@@ -11,11 +11,11 @@ class Board:
         # Board array 
         self.board = [
             ["X", "X", "X", "X", "X", "X"],
-             ["X", "X", "X", "X", "X", "X"],
-              ["X", "X", "X", "X", "X", "X", "X"], # Exit is here
-               ["X", "X", "X", "X", "X", "X"],
-                ["X", "X", "X", "X", "X", "X"],
-                 ["X", "X", "X", "X", "X", "X"],
+            ["X", "X", "X", "X", "X", "X"],
+            ["X", "X", "X", "X", "X", "X", "X"], # Exit is here
+            ["X", "X", "X", "X", "X", "X"],
+            ["X", "X", "X", "X", "X", "X"],
+            ["X", "X", "X", "X", "X", "X"],
         ]
         
     def place_block(self, block):
