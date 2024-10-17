@@ -1,13 +1,21 @@
 import pygame
 from setting import *
 
+
 class Block:
     def __init__(self, position=[0, 0], orientation='h', colour=(255, 255, 255), size=2):
-        self.position = position                        # Position in the array
-        self.size = size                                # How long gonna be the block is, 2?3?
-        self.orientation = orientation                  # Orientation in the array, horizontal or vertical
-        self.colour = colour                            # Color in the block
-        self.dragging = False                           # Dragging check
+        '''corresponding to the below variables: 
+        Position in the array,
+        How long gonna be the block is, 2?3?,
+        Orientation in the array, horizontal or vertical,
+        Color in the block,
+        Dragging check
+        '''
+        self.position = position
+        self.size = size
+        self.orientation = orientation
+        self.colour = colour
+        self.dragging = False
 
     def start_drag(self, mouse_pos):
         # Check if the mouse is over the block to start dragging
@@ -21,11 +29,13 @@ class Block:
 
     # Function is for positioning and legal movement within the board
     def update_position(self, mouse_pos, board):
+
         if self.dragging:
+
             # Calculate grid position based on mouse position
             grid_x = mouse_pos[0] // tile_size
             grid_y = mouse_pos[1] // tile_size
-            
+
             # Clear previous position from the board
             if self.orientation == 'h':
                 for i in range(self.size):
@@ -40,23 +50,29 @@ class Block:
             if self.orientation == 'h':
                 # Horizontal blocks can only move horizontally
                 if 0 <= grid_x <= len(board[0]) - self.size and grid_y == self.position[1]:
-                    valid_move = True
+                    if self.is_move_valid(grid_x, grid_y, board):
+                        print("1")
+                        valid_move = True
             elif self.orientation == 'v':
                 # Vertical blocks can only move vertically
                 if self.position[0] == grid_x and 0 <= grid_y <= len(board) - self.size:
-                    valid_move = True
-                    
-            
-            # !Allow the red block to move to [6][2]!
+                    if self.is_move_valid(grid_x, grid_y, board):
+                        print("2")
+                        valid_move = True
+
+            # Allow the red block to move to [6][2]
+            # For the exit function to work
             if self.colour == Red and self.orientation == 'h' and grid_y == 2 and grid_x == 5:
+                print("3")
                 valid_move = True
 
             # Additional validation to check for overlapping blocks
             if valid_move and self.is_move_valid(grid_x, grid_y, board):
-                
+
                 self.position = [grid_x, grid_y]
                 # Place the block in the new position
                 for i in range(self.size):
+
                     if self.colour == Red:
                         if self.orientation == 'h':
                             board[grid_y][grid_x + i] = "R"
@@ -68,19 +84,34 @@ class Block:
                         elif self.orientation == 'v':
                             board[grid_y + i][grid_x] = "Y"
             else:
+                print("error")
+            
                 # If invalid, reset the position in the array to its original
                 self.place_block(board)
 
     def is_move_valid(self, grid_x, grid_y, board):
         # Check for valid move within board limits and collision detection on
         if self.orientation == 'h':
-            for i in range(self.size):
-                if board[grid_y][grid_x + i] != "X":
-                    return False
+                # Moving horizontally, ensure no blocks are in the way along the entire path
+                if grid_x < self.position[0]: 
+                    for i in range(grid_x, self.position[0]):
+                        # To check if theres any blocks in the way
+                        if board[grid_y][i] != "X": 
+                            return False
+                else:  # Moving right
+                    for i in range(self.position[0] + self.size, grid_x + self.size):
+                        if board[grid_y][i] != "X":
+                            return False
         elif self.orientation == 'v':
-            for i in range(self.size):
-                if board[grid_y + i][grid_x] != "X":
-                    return False
+            # Moving vertically, ensure no blocks are in the way along the entire path
+            if grid_y < self.position[1]: 
+                for i in range(grid_y, self.position[1]):
+                    if board[i][grid_x] != "X":
+                        return False
+            else:
+                for i in range(self.position[1] + self.size, grid_y + self.size):
+                    if board[i][grid_x] != "X":
+                        return False
         return True
 
     def place_block(self, board):
@@ -96,11 +127,23 @@ class Block:
                     board[self.position[1]][self.position[0] + i] = "Y"
                 elif self.orientation == 'v':
                     board[self.position[1] + i][self.position[0]] = "Y"
-                        
+
     def render(self, screen):
         # Render the block based on its current position and size
-        for i in range(self.size):
-            if self.orientation == 'h':
-                pygame.draw.rect(screen, self.colour, pygame.Rect((self.position[0] + i) * tile_size, self.position[1] * tile_size, tile_size, tile_size))
-            elif self.orientation == 'v':
-                pygame.draw.rect(screen, self.colour, pygame.Rect(self.position[0] * tile_size, (self.position[1] + i) * tile_size, tile_size, tile_size))
+        if self.orientation == 'h':
+            block_rect = pygame.Rect(
+                self.position[0] * tile_size,
+                self.position[1] * tile_size,
+                self.size * tile_size,
+                tile_size
+            )
+        elif self.orientation == 'v':
+            block_rect = pygame.Rect(
+                self.position[0] * tile_size,
+                self.position[1] * tile_size,
+                tile_size,
+                self.size * tile_size
+            )
+        pygame.draw.rect(screen, (0, 0, 0), block_rect, 5)
+        # Black margin outline
+        pygame.draw.rect(screen, self.colour, block_rect.inflate(-10, -10))

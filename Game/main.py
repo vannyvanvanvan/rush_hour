@@ -1,6 +1,6 @@
 import pygame
 
-from block import Block
+from levels import *
 from board import Board
 from setting import *
 
@@ -16,65 +16,76 @@ pygame.display.set_icon(program_icon)
 board = Board()
 
 
-# Test blocks will add a library to store game data later
-red_block = Block(position=[3, 2], orientation='h', colour=Red, size=2)
-#yellow_block = Block(position=[0, 0], orientation='h', colour=Yellow, size=2)
-yellow_block = Block(position=[0, 3], orientation='v', colour=Yellow, size=3)
+# Get levels
+levels = get_levels()
+# Load levels, will change later for menu select
+current_level = levels[0]
 
-# Place the blocks on the board
-board.place_block(red_block)
-board.place_block(yellow_block)
-
-# Display the initial board state
-# Console output after placing blocks
-board.display() 
+blocks = []
+for block_data in current_level['blocks']:
+    block = block_data
+    blocks.append(block)
+    board.place_block(block)
+    
+# For level creation easier for myself to keep track of the location of each blocks array
+def display_mouse_position():
+    mouse_pos = pygame.mouse.get_pos()
+    grid_x = mouse_pos[0] // tile_size
+    grid_y = mouse_pos[1] // tile_size
+    print(f"Mouse position in grid: ({grid_x}, {grid_y})")
+    print(f"Array: ({grid_y}, {grid_x})")
+    print("========================")
 
 # Event for the game to close/quit when the window is closed
+
+
 def events():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             quit(0)
-            
+
         if event.type == pygame.MOUSEBUTTONDOWN:
-            # Left mouse button
-            if event.button == 1:  
+            if event.button == 1:
                 mouse_pos = event.pos
-                red_block.start_drag(mouse_pos)
-                yellow_block.start_drag(mouse_pos)
+                for block in blocks:
+                    block.start_drag(mouse_pos)
+                    
+        elif event.type == pygame.MOUSEMOTION:
+            # Update the position of the block when dragging it
+            for block in blocks:
+                mouse_pos = pygame.mouse.get_pos()
+                block.update_position(mouse_pos,  board.board) 
 
         if event.type == pygame.MOUSEBUTTONUP:
-            # Left mouse button
-            if event.button == 1: 
-                red_block.stop_drag()
-                yellow_block.stop_drag()
-                
-        
-        if red_block.dragging:
-            mouse_pos = pygame.mouse.get_pos()
-            red_block.update_position(mouse_pos, board.board)  # Pass the board array
-        
-        if yellow_block.dragging:
-            mouse_pos = pygame.mouse.get_pos()
-            yellow_block.update_position(mouse_pos, board.board)  # Pass the board array
-            
+            if event.button == 1:
+                for block in blocks:
+                    # Moved the display function to here, so it will be printed out
+                    # Everytime player releases the mouse
+                    board.display()
+                    block.stop_drag()
+      
+        # When pressed "0" i can see where my pointer pointed to which array
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_0:
+                display_mouse_position()
+
+
 def draw():
-    
+
     # Added a loop, which is called game_state for soft locks
     # game start = stage_1
     # game, map finishes = stage_2
     if board.game_state == "stage_1":
         screen.fill(DarkGrey)
-        
-        # Can be removed
-        board.display()                     # Concole board
-        
-        board.render(screen, tile_size)         # Render the board
-        red_block.render(screen)                # Render the red block
-        yellow_block.render(screen)             # Render the red block
-        
-        pygame.display.flip()                   # Update the display
-        
+
+        board.render(screen, tile_size)
+        # Render all blocks
+        for block in blocks:
+            block.render(screen)
+        # Update display
+        pygame.display.flip()
+
     # Check if the red car has reached the exit if so stage_2
     # Console and game output
     if board.exit_check():
@@ -83,20 +94,23 @@ def draw():
         # Rendering the winning message
         font = pygame.font.Font(None, 36)
         text = font.render("You win", True, (255, 255, 255))
-        text_rect = text.get_rect(center=(Screen_Width  // 2, Screen_Height  // 2))
+        text_rect = text.get_rect(
+            center=(Screen_Width // 2, Screen_Height // 2))
         screen.blit(text, text_rect)
         print("You win!")
         pygame.display.flip()
-            
+
+
 def run():
     game_running = True
     while game_running:
         events()
         draw()
-        
-        #if board.game_state == "stage_3":
 
-            #game_running = False
-            
+        # if board.game_state == "stage_3":
+
+        # game_running = False
+
+
 if __name__ == "__main__":
     run()
