@@ -92,3 +92,59 @@ However, i later figure out the error is located in the
         return True
 ```
 With the latest check logic the blocks can not be phasing through other blocks even there are spaces left for them to fit in.
+
+# 18/10/2024
+- Create a menu for the game, now the game have a function basic menu for the level selection, still work in progress.
+- Dynamic levels selections, not hard coded.
+- Changed event() function for a more logical and better code structure.
+
+#
+- Commented the debug codes, will remove dead code later on.
+- I have sampled afew founds for the game.
+
+# 21/10/2024
+- Supervisor has suggested the material related to my work https://aima.cs.berkeley.edu/
+
+# 25/10/2024
+- Conducting experment on DFS, array Maze solving is used to let me understand more about it.
+- It is used data structures known as **"Stack"**.
+- A "stack" is a data structure used for the collection of the objects and based on the principle of **"LIFO"** known as **Last In First Out**.
+- Now in a maze there are North, East, South, West.
+- Marking the inital point as visited.
+- Push current position to the stack.
+- Pop() last element from the stack out.
+- Check each neighboring cell in the North, East, South, and West directions.
+- If a neighboring cell is open and unvisited, mark it as visited, push it onto the stack, and continue.
+- If the neighboring cell is the maze exit, the solution is found.
+#
+- In this case what is DFS
+- If a path is blocked or no unvisited neighbors, DFS automatically backtracks by popping the stack, "reversing" the path and trying alternative routes until exit is find.
+
+# 29/10/2024
+- Conducting experment on BFS, array Maze solving is used to let me understand more about it.
+- It is used data structures known as **"Queue"**.
+- A "Quene" is a data structure used for the collection of the objects and based on the principle of **"FIFO"** known as **First In First Out**.
+- Now in a maze there are North, East, South, West.
+- Marking the inital point as visited.
+- Push current position to the quene.
+- Pop(0) first element from the quene out.
+- Check each neighboring cell in the North, East, South, and West directions.
+- If a neighboring cell is open and unvisited, mark it as visited, enqueue it, and continue.
+- If the neighboring cell is the maze exit, the shortest solution path is found, as BFS explores layer-by-layer.
+#
+- Path tracing in BFS
+- Ensuring the shortest path by exploring all possible nodes at the current "layer" before moving on to nodes at the next layer.
+- Therefore, the first time the exit is reached, it will be by the shortest path.
+#
+- I will be using `collections` library for the `deque` in Python instead of **pop(0)**, they work the same way but **pop(0)** is inefficient because it requires shifting all remaining elements one position to the left, resulting in an **O(n)** time complexity. `Deque`, on the other hand, is more optimized for appending and popping from both ends with **O(1)** time complexity.
+
+# 1/11/2024
+- Dijkstra’s algorithm
+- It ensures that the shortest path is found
+- Dijkstra’s algorithm requires each cells act like "node" in a graph and it searches for the shortest path with the lowest costs
+- **Priority Queue** implemented as a min-heap, keeps track of cells with the lowest accumulated costs. This allows the algorithm to expand the lowest-cost paths first.
+
+
+# 8/11/2024
+- Greedy search 
+- Manhattan distance as the heuristic

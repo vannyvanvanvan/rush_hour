@@ -1,5 +1,6 @@
 import pygame
 
+from menu import Menu
 from levels import *
 from board import Board
 from setting import *
@@ -14,18 +15,23 @@ program_icon = pygame.image.load('./assets/icon.png')
 pygame.display.set_icon(program_icon)
 # pygame.time.Clock()
 board = Board()
-
-
-# Get levels
-levels = get_levels()
-# Load levels, will change later for menu select
-current_level = levels[0]
-
+current_level_index = 0
 blocks = []
-for block_data in current_level['blocks']:
-    block = block_data
-    blocks.append(block)
-    board.place_block(block)
+levels = get_levels() 
+menu = Menu(screen)
+# Main menu
+game_state = "stage_0"
+
+def level(index):
+    # Load the selected level 
+    global blocks
+    current_level = levels[index]
+    blocks = []
+    for block_data in current_level['blocks']:
+        block = block_data
+        blocks.append(block)
+        board.place_block(block)
+
     
 # For level creation easier for myself to keep track of the location of each blocks array
 def display_mouse_position():
@@ -36,58 +42,86 @@ def display_mouse_position():
     print(f"Array: ({grid_y}, {grid_x})")
     print("========================")
 
-# Event for the game to close/quit when the window is closed
-
-
 def events():
+    global game_state, current_level_index, blocks
+    
+    # Event for the game to close/quit when the window is closed
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             quit(0)
+        
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            mouse_pos = event.pos
+            if game_state == "stage_0":
+                if menu.play_button.collidepoint(mouse_pos):
+                    # Transition to level selection
+                    game_state = "stage_0_1"
+            elif game_state == "stage_0_1":
+                for index in range(len(levels)):
+                    level_rect = pygame.Rect(Screen_Width // 2 - 100, Screen_Height // 4 + index * 50 - 20, 200, 40)
+                    if level_rect.collidepoint(mouse_pos):
+                        current_level_index = index
+                        # Load the selected level
+                        level(index) 
+                        # Starting the game by switching to stage_1
+                        board.game_state = "stage_1"
+                        game_state = "stage_1"
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
-                mouse_pos = event.pos
+            # Block dragging
+            if board.game_state == "stage_1":
                 for block in blocks:
                     block.start_drag(mouse_pos)
-                    
-        elif event.type == pygame.MOUSEMOTION:
-            # Update the position of the block when dragging it
+
+        elif event.type == pygame.MOUSEMOTION and board.game_state == "stage_1":
             for block in blocks:
                 mouse_pos = pygame.mouse.get_pos()
-                block.update_position(mouse_pos,  board.board) 
+                block.update_position(mouse_pos, board.board)
 
-        if event.type == pygame.MOUSEBUTTONUP:
-            if event.button == 1:
-                for block in blocks:
-                    # Moved the display function to here, so it will be printed out
-                    # Everytime player releases the mouse
-                    board.display()
-                    block.stop_drag()
-      
-        # When pressed "0" i can see where my pointer pointed to which array
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_0:
-                display_mouse_position()
+        if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+            for block in blocks:
+                board.display()
+                block.stop_drag()
+
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_0:
+            display_mouse_position()
 
 
 def draw():
+    ''' 
+    Now stage_0 is the menu, 
+    stage_0_1 equals to the level selection, 
+    and stage_1 equals to the gameplay.
+    Lastly, stage_2 equals to the player won the level.
+    
+    Future going to add other stages with differen functions
+    '''
+    if game_state == "stage_0":
+        menu.render()
+    elif game_state == "stage_0_1":
+        menu.render_level_selection(levels)  
 
-    # Added a loop, which is called game_state for soft locks
-    # game start = stage_1
-    # game, map finishes = stage_2
+        # Draw level buttons
+        for index in range(len(levels)):
+            level_rect = pygame.Rect(Screen_Width // 2 - 100, Screen_Height // 4 + index * 50 - 20, 200, 40)
+            # Draw button background
+            pygame.draw.rect(screen, LightGrey, level_rect)
+            # Draw level text
+            level_text = menu.button_font.render(f"Level {index + 1}", True, DarkGrey)
+            level_text_rect = level_text.get_rect(center=level_rect.center)
+            screen.blit(level_text, level_text_rect)
+            
     if board.game_state == "stage_1":
         screen.fill(DarkGrey)
-
         board.render(screen, tile_size)
-        # Render all blocks
         for block in blocks:
             block.render(screen)
-        # Update display
         pygame.display.flip()
 
-    # Check if the red car has reached the exit if so stage_2
-    # Console and game output
+    '''
+    Check if the red car has reached the exit if so stage_2
+    Console and game output
+    '''
     if board.exit_check():
         board.game_state = "stage_2"
         screen.fill(DarkGrey)
@@ -106,11 +140,6 @@ def run():
     while game_running:
         events()
         draw()
-
-        # if board.game_state == "stage_3":
-
-        # game_running = False
-
-
+        
 if __name__ == "__main__":
     run()
