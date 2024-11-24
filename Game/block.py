@@ -42,22 +42,22 @@ class Block:
             # Clear previous position from the board
             if self.orientation == 'h':
                 for i in range(self.size):
-                    board[self.position[1]][self.position[0] + i] = 0
+                    board.board[self.position[1]][self.position[0] + i] = 0
             elif self.orientation == 'v':
                 for i in range(self.size):
-                    board[self.position[1] + i][self.position[0]] = 0
+                    board.board[self.position[1] + i][self.position[0]] = 0
 
             # Ensure the block stays within the bounds of the board
             valid_move = False
 
             if self.orientation == 'h':
                 # Horizontal blocks can only move horizontally
-                if 0 <= grid_x <= len(board[0]) - self.size and grid_y == self.position[1]:
+                if 0 <= grid_x <= len(board.board[0]) - self.size and grid_y == self.position[1]:
                     if self.is_move_valid(grid_x, grid_y, board):
                         valid_move = True
             elif self.orientation == 'v':
                 # Vertical blocks can only move vertically
-                if self.position[0] == grid_x and 0 <= grid_y <= len(board) - self.size:
+                if self.position[0] == grid_x and 0 <= grid_y <= len(board.board) - self.size:
                     if self.is_move_valid(grid_x, grid_y, board):
                         valid_move = True
 
@@ -75,14 +75,14 @@ class Block:
 
                     if self.colour == Red:
                         if self.orientation == 'h':
-                            board[grid_y][grid_x + i] = 1
+                            board.board[grid_y][grid_x + i] = 1
                         elif self.orientation == 'v':
-                            board[grid_y + i][grid_x] = 1
+                            board.board[grid_y + i][grid_x] = 1
                     elif self.colour == Yellow:
                         if self.orientation == 'h':
-                            board[grid_y][grid_x + i] = self.id
+                            board.board[grid_y][grid_x + i] = self.id
                         elif self.orientation == 'v':
-                            board[grid_y + i][grid_x] = self.id
+                            board.board[grid_y + i][grid_x] = self.id
             else:
                 # If invalid, reset the position in the array to its original
                 self.place_block(board)
@@ -94,21 +94,21 @@ class Block:
                 if grid_x < self.position[0]: 
                     for i in range(grid_x, self.position[0]):
                         # To check if theres any blocks in the way
-                        if board[grid_y][i] != 0: 
+                        if board.board[grid_y][i] != 0: 
                             return False
                 else:  # Moving right
                     for i in range(self.position[0] + self.size, grid_x + self.size):
-                        if board[grid_y][i] != 0:
+                        if board.board[grid_y][i] != 0:
                             return False
         elif self.orientation == 'v':
             # Moving vertically, ensure no blocks are in the way along the entire path
             if grid_y < self.position[1]: 
                 for i in range(grid_y, self.position[1]):
-                    if board[i][grid_x] != 0:
+                    if board.board[i][grid_x] != 0:
                         return False
             else:
                 for i in range(self.position[1] + self.size, grid_y + self.size):
-                    if board[i][grid_x] != 0:
+                    if board.board[i][grid_x] != 0:
                         return False
         return True
 
@@ -117,14 +117,14 @@ class Block:
         for i in range(self.size):
             if self.colour == Red:
                 if self.orientation == 'h':
-                    board[self.position[1]][self.position[0] + i] = 1
+                    board.board[self.position[1]][self.position[0] + i] = 1
                 elif self.orientation == 'v':
-                    board[self.position[1] + i][self.position[0]] = 1
+                    board.board[self.position[1] + i][self.position[0]] = 1
             elif self.colour == Yellow:
                 if self.orientation == 'h':
-                    board[self.position[1]][self.position[0] + i] = self.id
+                    board.board[self.position[1]][self.position[0] + i] = self.id
                 elif self.orientation == 'v':
-                    board[self.position[1] + i][self.position[0]] = self.id
+                    board.board[self.position[1] + i][self.position[0]] = self.id
 
     def render(self, screen):
         # Render the block based on its current position and size

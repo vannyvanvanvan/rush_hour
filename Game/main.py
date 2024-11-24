@@ -5,6 +5,8 @@ from levels import *
 from board import Board
 from setting import *
 
+from solver import path
+
 # Set up display
 pygame.init()
 screen = pygame.display.set_mode((Screen_Width, Screen_Height))
@@ -41,6 +43,15 @@ def display_mouse_position():
     print(f"Mouse position in grid: ({grid_x}, {grid_y})")
     print(f"Array: ({grid_y}, {grid_x})")
     print("========================")
+    
+    
+def test_path():
+    if blocks:
+        for block in blocks:
+            # Get the moves for the current block
+            moves = path(block)
+            for move in moves:
+                print(f"Block {move['block_id']} Direction: {move['orientation']}, Size:{move['size']}, Original Position: {move['original_position']}, Current Position: {move['current_position']}")
 
 def events():
     global game_state, current_level_index, blocks
@@ -76,7 +87,7 @@ def events():
         elif event.type == pygame.MOUSEMOTION and board.game_state == "stage_1":
             for block in blocks:
                 mouse_pos = pygame.mouse.get_pos()
-                block.update_position(mouse_pos, board.board)
+                block.update_position(mouse_pos, board)
 
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             for block in blocks:
@@ -85,7 +96,9 @@ def events():
 
         if event.type == pygame.KEYDOWN and event.key == pygame.K_0:
             display_mouse_position()
-
+            
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_1:
+            test_path()
 
 def draw():
     ''' 

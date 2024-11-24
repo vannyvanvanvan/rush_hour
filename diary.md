@@ -147,4 +147,42 @@ With the latest check logic the blocks can not be phasing through other blocks e
 
 # 8/11/2024
 - Greedy search 
-- Manhattan distance as the heuristic
+- `Manhattan distance` as the heuristic
+
+# 9/11/2024
+- Changed the whole grid from string format into integer format. It was suggested by the supervisor.
+- Edited how the output in the terminal is shown.
+
+# 10/11/2024
+- Created `Greedy search` in maze format
+- Just uses the heuristic function: `f(n) = h(n)`
+- `Manhattan distance` estimates how far a point is from the goal, by summing the absolute differences in `row` and `column` indices
+- Once again, `priority queue` (min-heap) to `store` and `retrieve positions` based on their heuristic values
+- Going to do A* next
+
+# 11/11/2024
+- Creating the `A* search`
+- Using the heuristic function: `f(n) = g(n) + h(n)`
+
+# 16/11/2024
+- Created the `A* search`
+- Estimateing the distance between the current position x, y and the goal
+- Then sum of the absolute differences of row and column indices
+- Priority Queue is to maintain a min-heap based on `f_cost = g_cost + heuristic`
+- g_cost means cost to reach the current node
+- f_cost means the estimated total cost
+
+# 17/11/2024
+- I tried to create a "path" that stores every infomation for the algorithms to work
+
+```
+File "d:\projects\Year_3_Program\Final year assignment\project\rush_hour_final_year_project\PROJECT\Game\block.py", line 97, in is_move_valid
+    if board[grid_y][i] != 0: 
+       ~~~~~^^^^^^^^
+TypeError: 'Board' object is not subscriptable 
+```
+
+- This error ocurred when I am trying to make the def path, later found out that i forgot to index into the board object like a list
+- but the board object is not behaving like a list or array, hence it is not directly subscriptable
+- from board to board.board it fixed the problem
+- Now it can access the array
