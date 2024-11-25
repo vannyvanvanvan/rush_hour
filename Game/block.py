@@ -5,14 +5,15 @@ from setting import *
 class Block:
     
     def __init__(self, position=[0, 0], orientation='h', colour = White, size=2, block_id=2):
-        '''corresponding to the below variables: 
-        Position in the array,
-        How long gonna be the block is, 2?3?,
-        Orientation in the array, horizontal or vertical,
-        Color in the block,
-        Dragging check,
-        Unique integer ID for the block
-        '''
+        """
+        # corresponding to the below variables: 
+        # Position in the array,
+        # How long gonna be the block is, 2?3?,
+        # Orientation in the array, horizontal or vertical,
+        # Color in the block,
+        # Dragging check,
+        # Unique integer ID for the block
+        """
         self.position = position
         self.size = size
         self.orientation = orientation
@@ -96,10 +97,13 @@ class Block:
                         # To check if theres any blocks in the way
                         if board.board[grid_y][i] != 0: 
                             return False
-                else:  # Moving right
+                else:
+                    # Moving right
                     for i in range(self.position[0] + self.size, grid_x + self.size):
-                        if board.board[grid_y][i] != 0:
-                            return False
+                        if i <= 5:
+                            if board.board[grid_y][i] != 0:
+                                return False
+                        
         elif self.orientation == 'v':
             # Moving vertically, ensure no blocks are in the way along the entire path
             if grid_y < self.position[1]: 

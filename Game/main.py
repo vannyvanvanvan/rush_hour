@@ -5,9 +5,7 @@ from menu import Menu
 from levels import *
 from board import Board
 from setting import *
-from algorithms import * 
-
-from solver import path
+from solver import * 
 
 # Set up display
 pygame.init()
@@ -45,15 +43,6 @@ def display_mouse_position():
     print(f"Mouse position in grid: ({grid_x}, {grid_y})")
     print(f"Array: ({grid_y}, {grid_x})")
     print("========================")
-    
-    
-def test_path():
-    if blocks:
-        for block in blocks:
-            # Get the moves for the current block
-            moves = path(block)
-            for move in moves:
-                print(f"Block {move['block_id']} Direction: {move['orientation']}, Size:{move['size']}, Original Position: {move['original_position']}, Current Position: {move['current_position']}")
 
 def events():
     global game_state, current_level_index, blocks
@@ -98,9 +87,6 @@ def events():
 
         if event.type == pygame.KEYDOWN and event.key == pygame.K_0:
             display_mouse_position()
-            
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_1:
-            test_path()
         
         if event.type == pygame.KEYDOWN and event.key == pygame.K_a:
             for i in bfs(board, blocks):
@@ -112,14 +98,14 @@ def events():
                 time.sleep(1)
 
 def draw():
-    ''' 
-    Now stage_0 is the menu, 
-    stage_0_1 equals to the level selection, 
-    and stage_1 equals to the gameplay.
-    Lastly, stage_2 equals to the player won the level.
+    """
+    # Now stage_0 is the menu, 
+    # stage_0_1 equals to the level selection, 
+    # and stage_1 equals to the gameplay.
+    # Lastly, stage_2 equals to the player won the level.
     
-    Future going to add other stages with differen functions
-    '''
+    # Future going to add other stages with differen functions
+    """
     if game_state == "stage_0":
         menu.render()
     elif game_state == "stage_0_1":
@@ -142,10 +128,10 @@ def draw():
             block.render(screen)
         pygame.display.flip()
 
-    '''
-    Check if the red car has reached the exit if so stage_2
-    Console and game output
-    '''
+    """
+    # Check if the red car has reached the exit if so stage_2
+    # Console and game output
+    """
     if board.exit_check():
         board.game_state = "stage_2"
         screen.fill(DarkGrey)
@@ -155,7 +141,7 @@ def draw():
         text_rect = text.get_rect(
             center=(Screen_Width // 2, Screen_Height // 2))
         screen.blit(text, text_rect)
-        print("You win!")
+        #print("You win!")
         pygame.display.flip()
 
 

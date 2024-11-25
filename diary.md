@@ -186,3 +186,6 @@ TypeError: 'Board' object is not subscriptable
 - but the board object is not behaving like a list or array, hence it is not directly subscriptable
 - from board to board.board it fixed the problem
 - Now it can access the array
+
+# 20/11/2024
+- After i tired to make the path for the algorithms to work properly, i figured that saving everything within a block can not save resources and making it overcomplicated, instead i will be changing how the path work in my next commit, which is saving the grid as the path
