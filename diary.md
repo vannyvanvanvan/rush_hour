@@ -189,3 +189,14 @@ TypeError: 'Board' object is not subscriptable
 
 # 20/11/2024
 - After i tired to make the path for the algorithms to work properly, i figured that saving everything within a block can not save resources and making it overcomplicated, instead i will be changing how the path work in my next commit, which is saving the grid as the path
+
+# 24/11/2024
+```  File "d:\projects\Year_3_Program\Final year assignment\project\rush_hour_final_year_project\PROJECT\Game\block.py", line 101, in is_move_valid
+    if board.board[grid_y][i] != 0:
+       ~~~~~~~~~~~~~~~~~~~^^^
+IndexError: list index out of range" 
+```
+
+- This bug is encountered when i tried to make the solver for BFS. After fixing is_move_valid() function, making it unable to go out bounds the problem is fixed.
+
+- Finished working on the BFS algothm solver. 
