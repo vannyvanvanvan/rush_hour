@@ -1,9 +1,11 @@
+import time
 import pygame
 
 from menu import Menu
 from levels import *
 from board import Board
 from setting import *
+from algorithms import * 
 
 from solver import path
 
@@ -99,6 +101,15 @@ def events():
             
         if event.type == pygame.KEYDOWN and event.key == pygame.K_1:
             test_path()
+        
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_a:
+            for i in bfs(board, blocks):
+                for block in blocks:
+                    if block.id == i["block_id"]:
+                        block.dragging = True
+                        block.update_position((i["current_position"][0] * tile_size, i["current_position"][1] * tile_size), board)
+                        block.dragging = False
+                time.sleep(1)
 
 def draw():
     ''' 

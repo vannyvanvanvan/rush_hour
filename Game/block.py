@@ -108,8 +108,9 @@ class Block:
                         return False
             else:
                 for i in range(self.position[1] + self.size, grid_y + self.size):
-                    if board.board[i][grid_x] != 0:
-                        return False
+                    if i <= 5:
+                        if board.board[i][grid_x] != 0:
+                            return False
         return True
 
     def place_block(self, board):
