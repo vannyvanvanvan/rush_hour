@@ -29,7 +29,7 @@ def get_levels():
     level_2 = {
         "blocks": [
             Block(position=[1, 2], orientation='h', colour=Red, size=2, block_id=1),
-            Block(position=[4, 3], orientation='v', colour=Yellow, size=2, block_id=2)
+            Block(position=[4, 2], orientation='v', colour=Yellow, size=2, block_id=2)
         ]
     }
     levels.append(level_2)

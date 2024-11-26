@@ -86,16 +86,30 @@ def events():
                 block.stop_drag()
 
         if event.type == pygame.KEYDOWN and event.key == pygame.K_0:
+            # Excuse check mouse position
             display_mouse_position()
         
         if event.type == pygame.KEYDOWN and event.key == pygame.K_a:
-            for i in bfs(board, blocks):
+            # Excuse BFS function
+            for move in bfs(board, blocks):
                 for block in blocks:
-                    if block.id == i["block_id"]:
+                    if block.id == move["block_id"]:
                         block.dragging = True
-                        block.update_position((i["current_position"][0] * tile_size, i["current_position"][1] * tile_size), board)
+                        block.update_position(
+                            (move["current_position"][0] * tile_size, move["current_position"][1] * tile_size),
+                            board
+                        )
                         block.dragging = False
-                time.sleep(1)
+                
+                # Rerender the board and blocks after each move
+                screen.fill(DarkGrey)
+                board.render(screen, tile_size)
+                for block in blocks:
+                    block.render(screen)
+                
+                # Update the display
+                pygame.display.flip()
+                pygame.time.delay(10)
 
 def draw():
     """

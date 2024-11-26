@@ -200,3 +200,6 @@ IndexError: list index out of range"
 - This bug is encountered when i tried to make the solver for BFS. After fixing is_move_valid() function, making it unable to go out bounds the problem is fixed.
 
 - Finished working on the BFS algothm solver. 
+
+# 25/11/2024
+- Added visualization for the BFS solver, for now whenever pressed the "a" button, it will excuse the function.
