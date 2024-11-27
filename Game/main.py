@@ -91,7 +91,7 @@ def events():
         
         if event.type == pygame.KEYDOWN and event.key == pygame.K_a:
             # Excuse BFS function
-            for move in bfs(board, blocks):
+            for move in a_star(board, blocks):
                 for block in blocks:
                     if block.id == move["block_id"]:
                         block.dragging = True
