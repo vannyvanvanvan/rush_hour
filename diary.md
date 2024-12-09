@@ -190,7 +190,7 @@ TypeError: 'Board' object is not subscriptable
 # 20/11/2024
 - After i tired to make the path for the algorithms to work properly, i figured that saving everything within a block can not save resources and making it overcomplicated, instead i will be changing how the path work in my next commit, which is saving the grid as the path
 
-# 24/11/2024
+# 25/11/2024
 ```  File "d:\projects\Year_3_Program\Final year assignment\project\rush_hour_final_year_project\PROJECT\Game\block.py", line 101, in is_move_valid
     if board.board[grid_y][i] != 0:
        ~~~~~~~~~~~~~~~~~~~^^^
@@ -199,7 +199,30 @@ IndexError: list index out of range"
 
 - This bug is encountered when i tried to make the solver for BFS. After fixing is_move_valid() function, making it unable to go out bounds the problem is fixed.
 
-- Finished working on the BFS algothm solver. 
+- Finished working on the BFS algothm solver.
 
-# 25/11/2024
+# 27/11/2024
 - Added visualization for the BFS solver, for now whenever pressed the "a" button, it will excuse the function.
+
+# 29/11/2024
+- Moved all of the functions other than the main.py to .Game/src files.
+- Added a blocky font for the game, the font is found on google font. "https://fonts.google.com/specimen/Press+Start+2P"
+- Added a counter for the game.
+
+
+# 30/11/2024
+- Added a menu button for the game
+- Fixing smelly code
+- Fixed render errors
+
+# 12/1/2024
+- Fixed an error where when it changes back to stage 0 from stage 1 after loading the level, it didn't reset the board state so it bugged the whole rendering and gameplay. Now when the user switches back to stage 0 using the menu button, it will use a deepcopy of the levels so it won't change the level.py block coordinates, ALSO I added a reset block function to ensure that the state is fully reset.
+#
+- I used Ableton, which is a music software from Germany, and Audacity, a free and open-source audio editing and recording tool, to create the game audio.
+- Fixed a smelly code
+#
+- Sound Effects Attribution:
+- The Windows XP login and logoff sound effects are used in this project for educational purposes only. These sound effects are copyrighted by Microsoft Corporation and are not intended for commercial use.
+- Credits: Windows XP Login and Logoff Sound Effects – Courtesy of Microsoft Corporation.
+# 12/5/2024
+- Fixed more smelly codes

@@ -1,0 +1,39 @@
++---Assets
+|   +---effects
+|   |   \---audio
+|   |       |---block_move_sound.wav
+|   |       |---button_click_sound.wav
+|   |       |---win_sound.wav
+|   |       |---window_xp_logoff_sound.wav
+|   |       |---window_xp_logon_sound.wav
+|   +---experimental
+|   |   +---A_Star
+|   |       |---A_Star_maze.py
+|   |   +---BFS
+|   |       |---BFS_maze.py
+|   |   +---DFS
+|   |       |---DFS_maze.py
+|   |   +---Dijkstra
+|   |       |---dijksta_maze.py
+|   |   \---Greedy
+|   |       |---Greedy_maze.py
+|   +---font
+|   |   |---PressStart2P.ttf
+|   \---photo
+|   |   |---example_levels.png
+|   |   |---icon.png
+|   |   |---Sound_effect_making_1.png
+|   |   |---Sound_effect_making_2.png
++---Documents
+|   |---Final_year_project_planning_100999504.pdf
+\---Game
+|   |---main.py
+|   \---src
+|   |   |---block.py
+|   |   |---board.py
+|   |   |---function_buttons.py
+|   |   |---levels.py
+|   |   |---menu.py
+|   |   |---setting.py
+|   |   |---setup.py
+|   |   |---solver.py

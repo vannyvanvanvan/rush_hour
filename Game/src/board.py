@@ -1,6 +1,6 @@
 import pygame
 
-from setting import *
+from src.setting import *
 
 
 class Board:
@@ -17,7 +17,21 @@ class Board:
             [0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0],
         ]
+     
+    def reset(self):
+        # Reset the board to its initial state
+        self.board = [
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],  # Exit is here
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+        ]
         
+        # Clear the list of blocks
+        self.blocks = []
+        print(self.board)
                 
     def place_block(self, block):
         # Update the board array with the block's position and size
