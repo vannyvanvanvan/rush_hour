@@ -215,7 +215,7 @@ IndexError: list index out of range"
 - Fixing smelly code
 - Fixed render errors
 
-# 12/1/2024
+# 1/12/2024
 - Fixed an error where when it changes back to stage 0 from stage 1 after loading the level, it didn't reset the board state so it bugged the whole rendering and gameplay. Now when the user switches back to stage 0 using the menu button, it will use a deepcopy of the levels so it won't change the level.py block coordinates, ALSO I added a reset block function to ensure that the state is fully reset.
 #
 - I used Ableton, which is a music software from Germany, and Audacity, a free and open-source audio editing and recording tool, to create the game audio.
@@ -224,5 +224,37 @@ IndexError: list index out of range"
 - Sound Effects Attribution:
 - The Windows XP login and logoff sound effects are used in this project for educational purposes only. These sound effects are copyrighted by Microsoft Corporation and are not intended for commercial use.
 - Credits: Windows XP Login and Logoff Sound Effects – Courtesy of Microsoft Corporation.
-# 12/5/2024
+# 5/12/2024
 - Fixed more smelly codes
+
+# 21/1/2025
+- Getting started to work
+- Studying the strucutre for BFS then
+- Using the DFS knownledge(popping the last-in element out instead of popping the first-in element out) to transfer the strucutre for DFS
+
+# 23/1/2025
+- Tested with BFS and DFS
+- Same with the theory
+- BFS: Will always find the solution with the fewest moves, but the computation time and memory usage will increase significantly with harder levels
+- DFS: Will find a solution faster in terms of computation time but may require many more moves, especially as the level difficulty increases
+
+# 28/1/2025
+- Working on Greedy search
+
+# 31/1/2025
+- First create the heuristic first, then greedy function with heapq
+- Finished, and how it works?
+- By using the Manhattan distance or the Taxicab geometry for the mathematical term, the solver starts by measuring how close the red block is to the exit, then it calculates this using a straightforward distance formula which the horizontal gap between the red block’s current position and the exit[6][2]. 
+- For example, if the red block is three spaces away from the exit, the distance is "3" 
+- This measurement guides the solver toward moves that shrink this gap.
+
+# 7/2/2025
+- Finally finished the A* method.
+- It can find an optimal path by exploring potential board states.
+- Evaluates each move based on the sum of the path cost (g) and a heuristic estimate (h) of the remaining distance to the goal.
+- Uses priority queue also, to ensure that visited board states are not revisited.
+- If a move leads to a new board state, it is added to the queue with an updated priority value.
+- Next up multi - threading.
+
+# 12/2/2025
+- After thinking about it I have turned the solver and solver_runner back to a class.
