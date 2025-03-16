@@ -21,8 +21,7 @@ class Menu:
         play_text = blocky_font.render("Play", True, Black)
         play_text_rect = play_text.get_rect(center=self.play_button.center)
         self.screen.blit(play_text, play_text_rect)
-
-        pygame.display.flip() 
+        
 
     def render_level_selection(self, levels):
         from src.setup import blocky_font
