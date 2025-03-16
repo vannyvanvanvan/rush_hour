@@ -33,17 +33,6 @@ class runner:
 
             if block_moved:
                 move_counter.increment()
-                print(f"Moves: {move_counter.get_count()}")
-                screen.fill(DarkGrey)
-                menu_button.render()
-                # Render the move counter at the bottom of the screen
-                move_text = blocky_font.render(
-                    f"Moves: {move_counter.get_count()}", True, White
-                )
-                move_text_rect = move_text.get_rect(
-                    center=(Screen_Width // 2, Screen_Height - 20)
-                )
-                screen.blit(move_text, move_text_rect)
 
             # Rerender the board and blocks after each move
             board.render(screen, tile_size)
