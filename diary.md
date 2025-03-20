@@ -258,3 +258,12 @@ IndexError: list index out of range"
 
 # 12/2/2025
 - After thinking about it I have turned the solver and solver_runner back to a class.
+# 18/2/2025
+- After a very long try and error, finally added threading for my program and it fixed the "lag" issue that i talked about in my FYP interim report.
+- By having thread management and state synchronization.
+
+- First of all, all the threads are stored in the main.py, and there are two main threads, sleeper and runner.
+- Runner is for executing the a star solver algorithm.
+- Sleeper is delay sleep.
+
+-state synchronization is checks for wheather runner/sleeper is started or finished.
