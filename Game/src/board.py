@@ -17,6 +17,9 @@ class Board:
             [0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0],
         ]
+        
+        self.undo_stack = []
+        self.redo_stack = []
      
     def reset(self):
         # Reset the board to its initial state
@@ -29,6 +32,9 @@ class Board:
             [0, 0, 0, 0, 0, 0],
         ]
         
+        self.undo_stack = []
+        self.redo_stack = []
+        
         # Clear the list of blocks
         self.blocks = []
         print(self.board)
@@ -40,6 +46,14 @@ class Board:
                 self.board[block.position[1]][block.position[0] + i] = 1 if block.colour == Red else block.id
             else:
                 self.board[block.position[1] + i][block.position[0]] = 1 if block.colour == Red else block.id
+                
+    def clear_block(self, block):
+        # Clear the blocks current position from the board
+        for i in range(block.size):
+            if block.orientation == 'h':
+                self.board[block.position[1]][block.position[0] + i] = 0
+            elif block.orientation == 'v':
+                self.board[block.position[1] + i][block.position[0]] = 0
                 
     def display(self):
         # Prints the board to the console

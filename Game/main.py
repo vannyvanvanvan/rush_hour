@@ -73,6 +73,47 @@ def events(checks: dict, threads: dict):
                     board.reset()
                     board.game_state = "stage_0"
 
+                # Undo button clicked
+                elif menu_button.undo_button.collidepoint(mouse_pos):
+                    # Check if there are moves to undo
+                    if board.undo_stack:  
+                        # Get last move from the stack
+                        last_move = board.undo_stack.pop() 
+                        for block in blocks:
+                            if block.id == last_move["block_id"]:
+                                # Save the current position
+                                redo_move = {
+                                    "block_id": block.id,
+                                    "from": block.position.copy(),
+                                    "to": last_move["from"].copy(),
+                                }
+                                board.redo_stack.append(redo_move)
+                                board.clear_block(block)
+                                block.position = last_move["from"].copy()
+                                # Place the block in the new position
+                                board.place_block(block)
+                                block_move_sound.play()
+                                move_counter.decrement()  
+
+                # Redo button clicked
+                elif menu_button.redo_button.collidepoint(mouse_pos):     
+                    # Redo similar to undo
+                    if board.redo_stack:
+                        redo_move = board.redo_stack.pop()  
+                        for block in blocks:
+                            if block.id == redo_move["block_id"]:
+                                undo_move = {
+                                    "block_id": block.id,
+                                    "from": block.position.copy(),
+                                    "to": redo_move["to"].copy(),
+                                }
+                                board.undo_stack.append(undo_move)
+                                board.clear_block(block)
+                                block.position = redo_move["to"].copy()
+                                board.place_block(block)
+                                block_move_sound.play()
+                                move_counter.increment()
+                                
                 for block in blocks:
                     # Saving up the initial position
                     block.initial_position = block.position[:]
@@ -88,20 +129,25 @@ def events(checks: dict, threads: dict):
 
             if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 # Create a loop for when the block is moved
-
                 for block in blocks:
                     block.stop_drag()
 
                     # Check if the block moved
                     if block.position != block.initial_position:
-
                         block_move_sound.play()
-
                         move_counter.increment()
                         print(
                             f"Block moved from {block.initial_position} to {block.position}"
                         )
                         board.display()
+                        move_details = {
+                            "block_id": block.id,
+                            "from": block.initial_position.copy(),
+                            "to": block.position.copy(),
+                        }
+                        board.undo_stack.append(move_details)
+                        
+                        board.redo_stack = []  
 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_0:
                 # Excuse check mouse position
@@ -134,14 +180,12 @@ def events(checks: dict, threads: dict):
         board.game_state = "stage_2"
         win_sound.play()
         checks["sleep_started"] = True
-        threads["sleeper"]=threading.Thread(
-            target=sleeper.sleep, args=(checks,3,)
+        threads["sleeper"] = threading.Thread(
+            target=sleeper.sleep, args=(checks, 3,)
         )
         threads["sleeper"].start()
         checks["sleep_finished"] = False
-        
 
-        
     # End win sleep when done
     if checks["sleep_started"] and checks["sleep_finished"]:
         threads["sleeper"].join()
@@ -158,8 +202,6 @@ def draw(checks: dict):
     # stage_1 = gameplay,
     # stage_1_1 = solver stage,
     # stage_2 = player won.
-
-    # Future going to add other stages with differen functions
     """
     screen.fill(DarkGrey)
 
@@ -199,7 +241,6 @@ def draw(checks: dict):
         for block in blocks:
             block.render(screen)
 
-
     elif board.game_state == "stage_2":
 
         screen.fill(DarkGrey)
@@ -219,14 +260,10 @@ def draw(checks: dict):
         )
         screen.blit(winning_text, winning_text_rect)
 
-        # pygame.time.delay(3000)
-        # print("You win!")
-
-    
     # if True:
     if checks["runner_started"] and not checks["runner_finished"]:
         solving_rect = pygame.Rect(
-            Screen_Width // 2-150, Screen_Height // 3 , 300, 80
+            Screen_Width // 2 - 150, Screen_Height // 3, 300, 80
         )
         pygame.draw.rect(screen, Silver, solving_rect)
         # Draw solving text
@@ -234,13 +271,12 @@ def draw(checks: dict):
         solving_text_rect = solving_text.get_rect(center=solving_rect.center)
         screen.blit(solving_text, solving_text_rect)
 
-
     pygame.display.flip()
 
 
 def run():
     game_running = True
-    checks = {"runner_started": False, "runner_finished": True,"sleep_started": False, "sleep_finished": True}
+    checks = {"runner_started": False, "runner_finished": True, "sleep_started": False, "sleep_finished": True}
     threads = {}
 
     while game_running:
