@@ -28,14 +28,13 @@ def display_mouse_position():
 
 def events(checks: dict, threads: dict):
     # All the events handlers
-    global current_level_index, blocks
+    global current_level_index, blocks, game_running
     # Event for the game to close/quit when the window is closed
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             window_xp_logoff_sound.play()
             pygame.time.delay(2000)
-            pygame.quit()
-            quit(1)
+            game_running = False
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mouse_pos = event.pos
@@ -275,13 +274,16 @@ def draw(checks: dict):
 
 
 def run():
-    game_running = True
-    checks = {"runner_started": False, "runner_finished": True, "sleep_started": False, "sleep_finished": True}
+    global game_running
+    game_running= True
+    checks = {"runner_started": False,  "runner_finished": True, "sleep_started": False, "sleep_finished": True}
     threads = {}
 
     while game_running:
         events(checks, threads)
         draw(checks)
+    
+    pygame.quit()
 
 
 if __name__ == "__main__":
