@@ -8,18 +8,7 @@ class Board:
         
         self.game_state = "stage_0"
         
-        # Board array 
-        self.board = [
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0],  # Exit is here
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-        ]
-        
-        self.undo_stack = []
-        self.redo_stack = []
+        self.reset()
      
     def reset(self):
         # Reset the board to its initial state
