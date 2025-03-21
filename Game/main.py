@@ -104,11 +104,11 @@ def events(checks: dict, threads: dict):
                                 undo_move = {
                                     "block_id": block.id,
                                     "from": block.position.copy(),
-                                    "to": redo_move["to"].copy(),
+                                    "to": redo_move["from"].copy(),
                                 }
                                 board.undo_stack.append(undo_move)
                                 board.clear_block(block)
-                                block.position = redo_move["to"].copy()
+                                block.position = redo_move["from"].copy()
                                 board.place_block(block)
                                 block_move_sound.play()
                                 move_counter.increment()
