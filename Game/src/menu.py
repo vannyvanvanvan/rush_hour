@@ -4,8 +4,8 @@ class Menu:
     def __init__(self, screen):
         self.screen = screen
         self.play_button = pygame.Rect(Screen_Width/3, Screen_Height/3, 200, 50)
-
-
+        self.beachmark_button = pygame.Rect(Screen_Width/3, Screen_Height/3 + 70, 200, 50)
+        
     def render(self):
         from src.setup import blocky_font
         # Fill the screen with white
@@ -21,6 +21,12 @@ class Menu:
         play_text = blocky_font.render("Play", True, Black)
         play_text_rect = play_text.get_rect(center=self.play_button.center)
         self.screen.blit(play_text, play_text_rect)
+        
+        # Beachmark
+        pygame.draw.rect(self.screen, Silver, self.beachmark_button)
+        beachmark_text = blocky_font.render("Beachmark", True, Black)
+        beachmark_rect = beachmark_text.get_rect(center=self.beachmark_button.center)
+        self.screen.blit(beachmark_text, beachmark_rect)
         
 
     def render_level_selection(self, levels):

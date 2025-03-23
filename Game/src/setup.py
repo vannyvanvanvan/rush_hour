@@ -37,3 +37,7 @@ menu = Menu(screen)
 # Main menu
 move_counter = MoveCounter()
 window_xp_logon_sound.play()
+
+beachmark_results = []
+current_beachmark_index = 0
+algorithms = ["BFS", "DFS", "Dijkstra" "Greedy", "A*"]

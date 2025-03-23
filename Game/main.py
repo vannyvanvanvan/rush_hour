@@ -1,4 +1,5 @@
 import pygame, threading
+from src.beachmark import run_beachmark
 from src.solver_runner import runner
 from src.sleeper import sleeper
 from src.setup import *
@@ -26,9 +27,9 @@ def display_mouse_position():
     print("========================")
 
 
+# This is where the game elements are functioned 
 def events(checks: dict, threads: dict):
-    # All the events handlers
-    global current_level_index, blocks, game_running
+    global current_level_index, blocks, game_running, current_beachmark_index, beachmark_results
     # Event for the game to close/quit when the window is closed
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -45,6 +46,9 @@ def events(checks: dict, threads: dict):
                     # Transition to level selection
                     button_click_sound.play()
                     board.game_state = "stage_0_1"
+                elif menu.beachmark_button.collidepoint(mouse_pos):
+                    button_click_sound.play()
+                    board.game_state = "stage_0_2"
 
             elif board.game_state == "stage_0_1":
 
@@ -63,9 +67,32 @@ def events(checks: dict, threads: dict):
                         # Starting the game by switching to stage_1
                         button_click_sound.play()
                         board.game_state = "stage_1"
+                        
+                        
+            elif board.game_state == "stage_0_2":
+                for index in range(len(levels)):
+                    level_rect = pygame.Rect(
+                        Screen_Width//2 - 100,
+                        Screen_Height//4 + index*50 - 20,
+                        200, 40
+                    )
+                    if level_rect.collidepoint(mouse_pos):
+                        current_level_index = index
+                        level(index)
+                        # Reset benchmark state
+                        beachmark_results.clear()
+                        current_beachmark_index = 0
+                        checks["beachmark_started"] = False
+                        checks["beachmark_finished"] = False
+                        board.game_state = "stage_1_2"
+                        
+                        # Start benchmarking thread
+                        threads["beachmark"] = threading.Thread(target=run_beachmark, args=(checks,))
+                        threads["beachmark"].start()
+                        print("Benchmarking thread started")
 
             # Block dragging
-            if board.game_state == "stage_1":
+            elif board.game_state == "stage_1":
                 if menu_button.play_button.collidepoint(mouse_pos):
                     button_click_sound.play()
                     # Reset the board
@@ -117,6 +144,17 @@ def events(checks: dict, threads: dict):
                     # Saving up the initial position
                     block.initial_position = block.position[:]
                     block.start_drag(mouse_pos)
+            
+            elif board.game_state == "stage_1_3":
+                back_button = pygame.Rect(20, Screen_Height-70, 100, 50)
+                if back_button.collidepoint(mouse_pos):
+                    button_click_sound.play()
+                    board.game_state = "stage_0"
+                    # Reset benchmark state
+                    beachmark_results.clear()
+                    current_beachmark_index = 0
+                    checks["beachmark_started"] = False
+                    checks["beachmark_finished"] = False
 
         elif event.type == pygame.MOUSEMOTION and board.game_state == "stage_1":
             # Moving the block
@@ -171,10 +209,8 @@ def events(checks: dict, threads: dict):
         threads["runner"].join()
         checks["runner_started"] = False
         checks["runner_finished"] = True
-
-    """
+        
     # Check if the red car has reached the exit if so stage_2
-    """
     if checks["runner_finished"] and not checks["sleep_started"] and board.exit_check():
         board.game_state = "stage_2"
         win_sound.play()
@@ -192,16 +228,31 @@ def events(checks: dict, threads: dict):
         checks["sleep_finished"] = True
         board.reset()
         board.game_state = "stage_0"
+    
+    # Check benchmarking status if thread exists
+    if board.game_state == "stage_1_2" and checks["beachmark_started"]:
+        if checks["beachmark_finished"]:
+            print("Benchmark completed, showing results")
+            board.game_state = "stage_1_3"
+            if "beachmark" in threads:
+                threads["beachmark"].join()
 
-
+# This is where the game elements are rendered 
 def draw(checks: dict):
-    """
+    
+    # """
     # stage_0 = menu,
-    # stage_0_1 = level selection,
+    # stage_0_1 = level selection (play),
+    # stage_0_2 = level selection (Beachmark),
     # stage_1 = gameplay,
     # stage_1_1 = solver stage,
-    # stage_2 = player won.
-    """
+    # stage_2 = player won,
+    
+    # stage_1_2 = beachmark running,
+    # stage_1_3 = beachmark results,
+    # stage_2 = player won
+    # """
+    
     screen.fill(DarkGrey)
 
     if board.game_state == "stage_0":
@@ -218,8 +269,19 @@ def draw(checks: dict):
             pygame.draw.rect(screen, Silver, level_rect)
             # Draw level text
             level_text = blocky_font.render(f"Level {index + 1}", True, Black)
-            level_text_rect = level_text.get_rect(center=level_rect.center)
-            screen.blit(level_text, level_text_rect)
+            screen.blit(level_text, level_text.get_rect(center=level_rect.center))
+            
+    elif board.game_state == "stage_0_2":
+        menu.render_level_selection(levels)
+        for index in range(len(levels)):
+            level_rect = pygame.Rect(
+                Screen_Width//2 - 100,
+                Screen_Height//4 + index*50 - 20,
+                200, 40
+            )
+            pygame.draw.rect(screen, Silver, level_rect)
+            level_text = blocky_font.render(f"Level {index+1}", True, Black)
+            screen.blit(level_text, level_text.get_rect(center=level_rect.center))
 
     elif board.game_state in ["stage_1", "stage_1_1"]:
 
@@ -243,8 +305,8 @@ def draw(checks: dict):
     elif board.game_state == "stage_2":
 
         screen.fill(DarkGrey)
+        
         # Rendering the winning message
-
         move_text = blocky_font.render(
             f"Moves: {move_counter.get_count()}", True, White
         )
@@ -258,7 +320,39 @@ def draw(checks: dict):
             center=(Screen_Width // 2, Screen_Height // 2)
         )
         screen.blit(winning_text, winning_text_rect)
+        
+    elif board.game_state == "stage_1_2":
+        screen.fill(DarkGrey)
+        # Showing the progress
+        solving_rect = pygame.Rect(Screen_Width//2 - 150, Screen_Height//3, 300, 80)
+        pygame.draw.rect(screen, Silver, solving_rect)
+        solving_text = blocky_font.render("Benchmarking...", True, Black)
+        screen.blit(solving_text, solving_text.get_rect(center=solving_rect.center))
+        
+        # Showing the current algorithm that is being tested and add a check for a valid index
+        if 0 <= current_beachmark_index < len(algorithms):
+            current_algo = algorithms[current_beachmark_index]
+            algo_text = blocky_font.render(f"Running {current_algo}", True, White)
+            screen.blit(algo_text, algo_text.get_rect(center=(Screen_Width//2, Screen_Height//2)))
+        
+    elif board.game_state == "stage_1_3":
+        screen.fill(DarkGrey)
+        title_text = blocky_font.render("Beachmark Results", True, White)
+        screen.blit(title_text, title_text.get_rect(center=(Screen_Width//2, 50)))
+        # First element of the solver results
+        y_pos = 150
+        
+        for result in beachmark_results:
+            result_str = f"{result['algorithm']}: {result['moves']} moves, {result['duration']}s"
+            result_text = blocky_font.render(result_str, True, White)
+            screen.blit(result_text, result_text.get_rect(center=(Screen_Width//2, y_pos)))
+            y_pos += 70
 
+        back_button = pygame.Rect(20, Screen_Height-70, 100, 50)
+        pygame.draw.rect(screen, Silver, back_button)
+        back_text = blocky_font.render("Back", True, Black)
+        screen.blit(back_text, back_text.get_rect(center=back_button.center))
+        
     # if True:
     if checks["runner_started"] and not checks["runner_finished"]:
         solving_rect = pygame.Rect(
@@ -271,12 +365,18 @@ def draw(checks: dict):
         screen.blit(solving_text, solving_text_rect)
 
     pygame.display.flip()
-
-
+        
 def run():
     global game_running
-    game_running= True
-    checks = {"runner_started": False,  "runner_finished": True, "sleep_started": False, "sleep_finished": True}
+    game_running = True
+    checks = {
+        "runner_started": False,
+        "runner_finished": True,
+        "sleep_started": False,
+        "sleep_finished": True,
+        "beachmark_started": False,
+        "beachmark_finished": False
+    }
     threads = {}
 
     while game_running:

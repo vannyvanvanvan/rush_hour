@@ -20,6 +20,7 @@ class Block:
         self.colour = colour
         self.dragging = False
         self.id = block_id
+        self.initial_position = position.copy()
         
     def start_drag(self, mouse_pos):
         # Check if the mouse is over the block to start dragging
