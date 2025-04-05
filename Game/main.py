@@ -1,4 +1,5 @@
 import pygame, threading
+from src.spec_check import get_system_specs, wrap_text
 from src.beachmark import run_beachmark
 from src.solver_runner import runner
 from src.sleeper import sleeper
@@ -339,9 +340,28 @@ def draw(checks: dict):
         screen.fill(DarkGrey)
         title_text = blocky_font.render("Beachmark Results", True, White)
         screen.blit(title_text, title_text.get_rect(center=(Screen_Width//2, 50)))
-        # First element of the solver results
-        y_pos = 150
         
+        # Rendering system specs
+        specs = get_system_specs()
+        y_pos = 100
+        max_text_width = Screen_Width - 40
+
+        # Render each spec
+        spec_lines = [
+            f"CPU: {specs['CPU']}",
+            f"Cores/Threads: {specs['Cores']}/{specs['Threads']}",
+            f"RAM: {specs['RAM']}",
+        ]
+
+        for line in spec_lines:
+            wrapped = wrap_text(line, blocky_font, max_text_width)
+            for sub_line in wrapped:
+                text_surface = blocky_font.render(sub_line, True, White)
+                screen.blit(text_surface, (20, y_pos))
+                y_pos += 30
+        
+        # First element of the solver results
+        y_pos = 300
         for result in beachmark_results:
             result_str = f"{result['algorithm']}: {result['moves']} moves, {result['duration']}s"
             result_text = blocky_font.render(result_str, True, White)

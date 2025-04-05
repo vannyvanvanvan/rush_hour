@@ -3,6 +3,7 @@ import time
 from src.solver import Solver
 import src.setup as setup
 
+
 def run_beachmark(checks):
     print("Starting benchmark...")
     solvers = [
