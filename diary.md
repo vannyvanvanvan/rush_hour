@@ -258,6 +258,7 @@ IndexError: list index out of range"
 
 # 12/2/2025
 - After thinking about it I have turned the solver and solver_runner back to a class.
+
 # 18/2/2025
 - After a very long try and error, finally added threading for my program and it fixed the "lag" issue that i talked about in my FYP interim report.
 - By having thread management and state synchronization.
@@ -266,4 +267,14 @@ IndexError: list index out of range"
 - Runner is for executing the a star solver algorithm.
 - Sleeper is delay sleep.
 
--state synchronization is checks for wheather runner/sleeper is started or finished.
+- state synchronization is checks for wheather runner/sleeper is started or finished.
+
+# 28/2/2025
+- Finally added function for undo and redo button
+
+# 3/4/2025
+- Fixed redo smelly code
+- Late diary commit cause staying in hispital for a week and more due to serious pneumonia, total of sick time is one month all evidence can be provided if needed. 
+
+# 3/21/2025
+- Finally finished the final task which is making the comparison aka the benchmark, all the results with different level fits the theory.
