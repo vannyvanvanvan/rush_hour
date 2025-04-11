@@ -14,4 +14,4 @@ Install dependencies using `pip install -r requirements`.
 Running the game simply using the command `python ./PROJECT/Game/main.py`
 
 ---
-Note: after pressing the benchmark button, there is a memory on/off button to show peak memory useage.
+Note: after pressing the benchmark button, there is a memory on/off button to show peak memory usage.
