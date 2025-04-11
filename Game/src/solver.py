@@ -19,13 +19,16 @@ class Solver:
         visited = set()
         # [Current list of moves, current board state, and current block positions].
         queue = deque([[[], board, blocks]])
+        nodes_explored = 0
         
         while queue:
             moves, board, blocks = queue.popleft()
+            # dequeued node counted as well
+            nodes_explored += 1
             
             # Check if the exit is reached
             if board.exit_check():
-                return moves
+                return moves, nodes_explored
             
             for i, block in enumerate(blocks):
                 for direction in [1, -1]:
@@ -55,9 +58,11 @@ class Solver:
                                 'original_position': block.position,
                                 'current_position': new_blocks[i].position 
                             })
+                           
                             queue.append([new_move, new_board, new_blocks])
                             # Mark the new state as visited.
                             visited.add(hash(str(new_board.board)))
+                            nodes_explored += 1
                         
     @staticmethod
     def dfs(board, blocks):
@@ -69,13 +74,15 @@ class Solver:
         visited = set()
         # Current list of moves, current board state, and current block positions
         queue = deque([[[], board, blocks]])
+        nodes_explored = 0
         
         while queue:
             moves, board, blocks = queue.pop()
+            nodes_explored += 1
             
             # Check if the exit is reached
             if board.exit_check():
-                return moves
+                return moves, nodes_explored
             
             for i, block in enumerate(blocks):
                 for direction in [1, -1]:
@@ -108,6 +115,7 @@ class Solver:
                             queue.append([new_move, new_board, new_blocks])
                             # Mark the new state as visited.
                             visited.add(hash(str(new_board.board)))
+                            nodes_explored += 1
                             
     @staticmethod
     def dijkstra(board, blocks):
@@ -119,15 +127,16 @@ class Solver:
         visited = set()
         # [Current list of moves, current board state, and current block positions].
         queue = [(0, 0, [], board, blocks)]
-        
+        nodes_explored = 0   
         count = 0
+        
         while queue:
             f, _, moves, board, blocks = heapq.heappop(queue)
-            
+            nodes_explored += 1            
             
             # Check if the exit is reached
             if board.exit_check():
-                return moves
+                return moves, nodes_explored
             
             for i, block in enumerate(blocks):
                 for direction in [1, -1]:
@@ -161,6 +170,7 @@ class Solver:
                             heapq.heappush(queue, (len(moves) + 1, count, new_move, new_board, new_blocks))
                             # Mark the new state as visited.
                             visited.add(hash(str(new_board.board)))
+                            nodes_explored += 1
                             
     @staticmethod
     def greedy(board, blocks):
@@ -172,15 +182,16 @@ class Solver:
         visited = set()
         # Current list of moves, current board state, and current block positions
         queue = [(0, 0, [], board, blocks)]
-        
+        nodes_explored = 0
         count = 0
+        
         while queue:
             f, _, moves, board, blocks = heapq.heappop(queue)
-            
+            nodes_explored += 1
             
             # Check if the exit is reached
             if board.exit_check():
-                return moves
+                return moves, nodes_explored
             
             for i, block in enumerate(blocks):
                 for direction in [1, -1]:
@@ -214,6 +225,7 @@ class Solver:
                             heapq.heappush(queue, (Solver.heuristic(new_board.board), count, new_move, new_board, new_blocks))
                             # Mark the new state as visited.
                             visited.add(hash(str(new_board.board)))
+                            nodes_explored += 1
                             
     @staticmethod                       
     def a_star(board, blocks):
@@ -225,15 +237,16 @@ class Solver:
         visited = set()
         # [Current list of moves, current board state, and current block positions].
         queue = [(0, 0, [], board, blocks)]
-        
+        nodes_explored = 0        
         count = 0
+        
         while queue:
             f, _, moves, board, blocks = heapq.heappop(queue)
-            
+            nodes_explored += 1
             
             # Check if the exit is reached
             if board.exit_check():
-                return moves
+                return moves, nodes_explored
             
             for i, block in enumerate(blocks):
                 for direction in [1, -1]:
@@ -270,6 +283,7 @@ class Solver:
                             heapq.heappush(queue, (f, count, new_move, new_board, new_blocks))
                             # Mark the new state as visited.
                             visited.add(hash(str(new_board.board)))
+                            nodes_explored += 1
     @staticmethod                          
     def heuristic(board):
         x = board[2].index(1)

@@ -26,8 +26,15 @@ class Block:
         # Check if the mouse is over the block to start dragging
         grid_x = mouse_pos[0] // tile_size
         grid_y = mouse_pos[1] // tile_size
-        if self.position[0] <= grid_x < self.position[0] + self.size and self.position[1] == grid_y:
-            self.dragging = True
+        
+        if self.orientation == 'h':
+            # For horizontal blocks check if the mouse is within the block's width
+            if self.position[0] <= grid_x < self.position[0] + self.size and self.position[1] == grid_y:
+                self.dragging = True
+        elif self.orientation == 'v':
+            # Same with veritcal
+            if self.position[0] == grid_x and self.position[1] <= grid_y < self.position[1] + self.size:
+                self.dragging = True
 
     def stop_drag(self):
         self.dragging = False

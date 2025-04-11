@@ -32,7 +32,7 @@ class MenuButton:
         from src.setup import blocky_font
         # Draw the menu button
         pygame.draw.rect(self.screen, Silver, self.play_button)  
-        menu_text = blocky_font.render("menu", True, Black)
+        menu_text = blocky_font.render("Menu", True, Black)
         menu_text_rect = menu_text.get_rect(center=self.play_button.center)
         self.screen.blit(menu_text, menu_text_rect)
         # Draw undo button

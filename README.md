@@ -11,6 +11,7 @@ Also I will be documenting my own work by writing a diary, which can be found in
 
 Install dependencies using `pip install -r requirements`.
 
-Run server simply with `python main.py`
+Running the game simply using the command `python ./PROJECT/Game/main.py`
 
 ---
+Note: after pressing the benchmark button, there is a memory on/off button to show peak memory useage.

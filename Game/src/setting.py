@@ -5,11 +5,17 @@ Black = (0, 0, 0)
 Red = (255, 0, 0)
 Yellow = (255,255,0)
 Silver = (200, 200, 200)
+Green = (0, 255, 0)
+Red = (255, 0, 0)
 
 
 # Game settings
 Screen_Height = 800
 Screen_Width = 600
+
+Results_Width = Screen_Width * 2.25
+Results_Height = Screen_Height * 1.25
+
 Title = "Rush_hour"
 
 tile_size = 100

@@ -1,6 +1,6 @@
 import pygame, threading
+import copy
 from src.spec_check import get_system_specs, wrap_text
-from src.beachmark import run_beachmark
 from src.solver_runner import runner
 from src.sleeper import sleeper
 from src.setup import *
@@ -30,7 +30,7 @@ def display_mouse_position():
 
 # This is where the game elements are functioned 
 def events(checks: dict, threads: dict):
-    global current_level_index, blocks, game_running, current_beachmark_index, beachmark_results
+    global current_level_index, blocks, game_running, screen
     # Event for the game to close/quit when the window is closed
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -47,11 +47,18 @@ def events(checks: dict, threads: dict):
                     # Transition to level selection
                     button_click_sound.play()
                     board.game_state = "stage_0_1"
-                elif menu.beachmark_button.collidepoint(mouse_pos):
+                elif menu.benchmark_button.collidepoint(mouse_pos):
                     button_click_sound.play()
                     board.game_state = "stage_0_2"
 
             elif board.game_state == "stage_0_1":
+                back_button = pygame.Rect(20, Screen_Height-70, 100, 50)
+                if back_button.collidepoint(mouse_pos):
+                    button_click_sound.play()
+                    board.game_state = "stage_0"
+                    benchmark.reset_results()
+                    checks["benchmark_started"] = False
+                    checks["benchmark_finished"] = False
 
                 for index in range(len(levels)):
                     level_rect = pygame.Rect(
@@ -71,6 +78,20 @@ def events(checks: dict, threads: dict):
                         
                         
             elif board.game_state == "stage_0_2":
+                back_button = pygame.Rect(20, Screen_Height-70, 100, 50)
+                if back_button.collidepoint(mouse_pos):
+                    button_click_sound.play()
+                    board.game_state = "stage_0"
+                    benchmark.reset_results()
+                    checks["benchmark_started"] = False
+                    checks["benchmark_finished"] = False
+                    
+                    
+                memory_toggle_button = pygame.Rect(Screen_Width-250, Screen_Height-70, 240, 50)
+                if memory_toggle_button.collidepoint(mouse_pos):
+                    button_click_sound.play()
+                    benchmark.toggle_memory_tracking()
+                    
                 for index in range(len(levels)):
                     level_rect = pygame.Rect(
                         Screen_Width//2 - 100,
@@ -81,16 +102,15 @@ def events(checks: dict, threads: dict):
                         current_level_index = index
                         level(index)
                         # Reset benchmark state
-                        beachmark_results.clear()
-                        current_beachmark_index = 0
-                        checks["beachmark_started"] = False
-                        checks["beachmark_finished"] = False
+                        benchmark.reset_results()
+                        checks["benchmark_started"] = False
+                        checks["benchmark_finished"] = False
                         board.game_state = "stage_1_2"
                         
                         # Start benchmarking thread
-                        threads["beachmark"] = threading.Thread(target=run_beachmark, args=(checks,))
-                        threads["beachmark"].start()
-                        print("Benchmarking thread started")
+                        threads["benchmark"] = threading.Thread(target=benchmark.run_benchmark, args=(checks, board, blocks))
+                        threads["benchmark"].start()
+                        print("benchmarking thread started")
 
             # Block dragging
             elif board.game_state == "stage_1":
@@ -147,15 +167,13 @@ def events(checks: dict, threads: dict):
                     block.start_drag(mouse_pos)
             
             elif board.game_state == "stage_1_3":
-                back_button = pygame.Rect(20, Screen_Height-70, 100, 50)
+                back_button = pygame.Rect(20, Results_Height-70, 100, 50)
                 if back_button.collidepoint(mouse_pos):
                     button_click_sound.play()
                     board.game_state = "stage_0"
-                    # Reset benchmark state
-                    beachmark_results.clear()
-                    current_beachmark_index = 0
-                    checks["beachmark_started"] = False
-                    checks["beachmark_finished"] = False
+                    benchmark.reset_results()
+                    checks["benchmark_started"] = False
+                    checks["benchmark_finished"] = False
 
         elif event.type == pygame.MOUSEMOTION and board.game_state == "stage_1":
             # Moving the block
@@ -231,32 +249,36 @@ def events(checks: dict, threads: dict):
         board.game_state = "stage_0"
     
     # Check benchmarking status if thread exists
-    if board.game_state == "stage_1_2" and checks["beachmark_started"]:
-        if checks["beachmark_finished"]:
-            print("Benchmark completed, showing results")
+    if board.game_state == "stage_1_2" and checks["benchmark_started"]:
+        if checks["benchmark_finished"]:
+            print("benchmark completed, showing results")
             board.game_state = "stage_1_3"
-            if "beachmark" in threads:
-                threads["beachmark"].join()
+            if "benchmark" in threads:
+                threads["benchmark"].join()
 
 # This is where the game elements are rendered 
 def draw(checks: dict):
+    global screen 
     
     # """
     # stage_0 = menu,
     # stage_0_1 = level selection (play),
-    # stage_0_2 = level selection (Beachmark),
+    # stage_0_2 = level selection (benchmark),
     # stage_1 = gameplay,
     # stage_1_1 = solver stage,
     # stage_2 = player won,
     
-    # stage_1_2 = beachmark running,
-    # stage_1_3 = beachmark results,
+    # stage_1_2 = benchmark running,
+    # stage_1_3 = benchmark results,
     # stage_2 = player won
     # """
     
     screen.fill(DarkGrey)
 
     if board.game_state == "stage_0":
+        # back to normal after stage_1_3
+        if (screen.get_width(), screen.get_height()) != (Screen_Width, Screen_Height):
+            screen = pygame.display.set_mode((Screen_Width, Screen_Height))
         menu.render()
     elif board.game_state == "stage_0_1":
         menu.render_level_selection(levels)
@@ -271,9 +293,28 @@ def draw(checks: dict):
             # Draw level text
             level_text = blocky_font.render(f"Level {index + 1}", True, Black)
             screen.blit(level_text, level_text.get_rect(center=level_rect.center))
-            
+
+            back_button = pygame.Rect(20, Screen_Height-70, 100, 50)
+            pygame.draw.rect(screen, Silver, back_button)
+            back_text = blocky_font.render("Back", True, Black)
+            screen.blit(back_text, back_text.get_rect(center=back_button.center))
+                
     elif board.game_state == "stage_0_2":
         menu.render_level_selection(levels)
+        
+        back_button = pygame.Rect(20, Screen_Height-70, 100, 50)
+        pygame.draw.rect(screen, Silver, back_button)
+        back_text = blocky_font.render("Back", True, Black)
+        screen.blit(back_text, back_text.get_rect(center=back_button.center))
+        
+        #mem toggle
+        memory_toggle_button = pygame.Rect(Screen_Width-250, Screen_Height-70, 240, 50)
+        memory_status = benchmark.get_memory_tracking_status()
+        toggle_color = Green if memory_status else Red
+        pygame.draw.rect(screen, toggle_color, memory_toggle_button)
+        toggle_text = blocky_font.render("Memory: " + ("ON" if memory_status else "OFF"), True, White)
+        screen.blit(toggle_text, toggle_text.get_rect(center=memory_toggle_button.center))
+        
         for index in range(len(levels)):
             level_rect = pygame.Rect(
                 Screen_Width//2 - 100,
@@ -316,35 +357,44 @@ def draw(checks: dict):
         )
         screen.blit(move_text, move_text_rect)
 
-        winning_text = blocky_font.render("You win", True, White)
+        winning_text = blocky_font.render("You win !", True, White)
+        Return_text = blocky_font.render("Returning to menu in 3..", True, White)
         winning_text_rect = winning_text.get_rect(
             center=(Screen_Width // 2, Screen_Height // 2)
         )
+        
+        Return_text_rect = Return_text.get_rect(
+            center=(Screen_Width // 2, Screen_Height // 2 + 80)
+        )
         screen.blit(winning_text, winning_text_rect)
+        screen.blit(Return_text, Return_text_rect)
         
     elif board.game_state == "stage_1_2":
         screen.fill(DarkGrey)
         # Showing the progress
-        solving_rect = pygame.Rect(Screen_Width//2 - 150, Screen_Height//3, 300, 80)
+        solving_rect = pygame.Rect(Screen_Width//2 - 150, Screen_Height//3, 320, 80)
         pygame.draw.rect(screen, Silver, solving_rect)
         solving_text = blocky_font.render("Benchmarking...", True, Black)
         screen.blit(solving_text, solving_text.get_rect(center=solving_rect.center))
         
-        # Showing the current algorithm that is being tested and add a check for a valid index
-        if 0 <= current_beachmark_index < len(algorithms):
-            current_algo = algorithms[current_beachmark_index]
-            algo_text = blocky_font.render(f"Running {current_algo}", True, White)
-            screen.blit(algo_text, algo_text.get_rect(center=(Screen_Width//2, Screen_Height//2)))
+        # Showing the current algorithm that is being tested
+        current_algo = benchmark.get_current_algorithm()
+        algo_text = blocky_font.render(f"Running {current_algo}", True, White)
+        screen.blit(algo_text, algo_text.get_rect(center=(Screen_Width//2, Screen_Height//2)))
         
     elif board.game_state == "stage_1_3":
+        # so now the screen will resize for the long resuls output
+        if (screen.get_width(), screen.get_height()) != (Results_Width, Results_Height):
+            screen = pygame.display.set_mode((Results_Width, Results_Height))
+        
         screen.fill(DarkGrey)
-        title_text = blocky_font.render("Beachmark Results", True, White)
-        screen.blit(title_text, title_text.get_rect(center=(Screen_Width//2, 50)))
+        title_text = blocky_font.render("benchmark Results", True, White)
+        screen.blit(title_text, title_text.get_rect(center=(Results_Width//2, 50)))
         
         # Rendering system specs
         specs = get_system_specs()
         y_pos = 100
-        max_text_width = Screen_Width - 40
+        max_text_width = Results_Width - 40
 
         # Render each spec
         spec_lines = [
@@ -362,18 +412,20 @@ def draw(checks: dict):
         
         # First element of the solver results
         y_pos = 300
-        for result in beachmark_results:
-            result_str = f"{result['algorithm']}: {result['moves']} moves, {result['duration']}s"
+        for result in benchmark.benchmark_results:
+            if result["peak_memory_mb"] == "Not tracked" or result["peak_memory_mb"] == "err":
+                result_str = f"{result['algorithm']}: {result['moves']} moves, {result['nodes_explored']} nodes, {result['duration']}s"
+            else:
+                result_str = f"{result['algorithm']}: {result['moves']} moves, {result['nodes_explored']} nodes, {result['duration']}s, Peaked {result['peak_memory_mb']:.3g} MB"
             result_text = blocky_font.render(result_str, True, White)
-            screen.blit(result_text, result_text.get_rect(center=(Screen_Width//2, y_pos)))
+            screen.blit(result_text, result_text.get_rect(center=(Results_Width//2, y_pos)))
             y_pos += 70
 
-        back_button = pygame.Rect(20, Screen_Height-70, 100, 50)
+        back_button = pygame.Rect(20, Results_Height-70, 100, 50)
         pygame.draw.rect(screen, Silver, back_button)
         back_text = blocky_font.render("Back", True, Black)
         screen.blit(back_text, back_text.get_rect(center=back_button.center))
         
-    # if True:
     if checks["runner_started"] and not checks["runner_finished"]:
         solving_rect = pygame.Rect(
             Screen_Width // 2 - 150, Screen_Height // 3, 300, 80
@@ -394,10 +446,11 @@ def run():
         "runner_finished": True,
         "sleep_started": False,
         "sleep_finished": True,
-        "beachmark_started": False,
-        "beachmark_finished": False
+        "benchmark_started": False,
+        "benchmark_finished": False
     }
     threads = {}
+    
 
     while game_running:
         events(checks, threads)

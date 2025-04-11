@@ -1,5 +1,5 @@
 import pygame
-import copy
+from src.benchmark import Benchmark
 from src.board import Board
 from src.menu import Menu
 from src.function_buttons import MoveCounter, MenuButton
@@ -34,10 +34,6 @@ blocks = []
 levels = get_levels() 
 menu_button = MenuButton(screen)
 menu = Menu(screen)
-# Main menu
 move_counter = MoveCounter()
 window_xp_logon_sound.play()
-
-beachmark_results = []
-current_beachmark_index = 0
-algorithms = ["BFS", "DFS", "Dijkstra" "Greedy", "A*"]
+benchmark = Benchmark()

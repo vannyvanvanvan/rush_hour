@@ -10,7 +10,7 @@ class runner:
         block_moved = False
         print("Solving level...")
         start = time.time()
-        moves = Solver.a_star(board, blocks)
+        moves, nodes_explored = Solver.a_star(board, blocks)
         end = time.time()
         for move in moves:
             for block in blocks:
@@ -44,7 +44,5 @@ class runner:
             pygame.time.delay(60)
             block_moved = False
 
-        print(
-            f"Solved level in {round(end - start,3)} seconds using {len(moves)} moves"
-        )
+        print(f"Solved level in {round(end - start,3)}s | Moves: {len(moves)} | Nodes: {nodes_explored}")
         checks["runner_finished"] = True
